@@ -43,7 +43,7 @@ function addTitleTextToListWidget(text, listWidget) {
   item.textColor = isDark ? Color.white() : Color.black();
   try {
     item.font = Font.boldSystemFont(18);
-  } catch(e) {
+  } catch (e) {
     item.font = new Font('SF Mono', 18);
   }
 }
@@ -264,6 +264,32 @@ async function dataResults(url, checkinMsg, title) {
         }
         if (result.length != 0) {
           resultData = result.join("\n\n");
+        }
+      } else if (data.match(/STC-SPADES/)) {
+        let vipLevel = data.match(/VIP.*?:/g);
+        vipLevel = vipLevel[0].match(/[\u4e00-\u9fa5]{4}/g);
+        console.log(vipLevel);
+        if (vipLevel) {
+          result.push(`会员等级：${vipLevel}`);
+        }
+        let restData = data.match(/\d+.{0,1}\d+GB/g);
+        console.log(restData);
+        if (restData) {
+          result.push(`可用流量：${restData}`);
+        }
+        let resetDay = data.match(/([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8])))/g);
+        resetDay = resetDay[1];
+        console.log(resetDay);
+        if (resetDay) {
+          result.push(`下次流量重置日：${resetDay}`);
+        }
+        let onlineDevice = data.match(/\d\s\/\s\d/g);
+        console.log(onlineDevice);
+        if (onlineDevice) {
+          result.push(`在线设备数：${onlineDevice}`);
+        }
+        if (result.length != 0) {
+          resultData = result.join("\n");
         }
       } else {
         let todayUsed = data.match(/>*\s*今日(已用|使用)*[^B]+/);
